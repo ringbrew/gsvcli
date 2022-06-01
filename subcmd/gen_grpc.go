@@ -190,6 +190,7 @@ func (g GenGrpc) protoC(protoPath string) error {
 		fmt.Sprintf("--go-grpc_out=./"),
 		fmt.Sprintf("--go-grpc_opt=module=%s", g.module),
 		fmt.Sprintf("--go-gsv_out=./"),
+		fmt.Sprintf("--go-gsv_opt=module=%s", g.module),
 		fmt.Sprintf("--grpc-gateway_out=:./"),
 		fmt.Sprintf("--grpc-gateway_opt=logtostderr=true"),
 		fmt.Sprintf("--grpc-gateway_opt=module=%s", g.module),
