@@ -32,11 +32,11 @@ func NewGenGrpc() *GenGrpc {
 			}
 		}
 	} else {
-		log.Fatal(err.Error())
+		log.Fatal("[FATAL] " + err.Error())
 	}
 
 	if module == "" {
-		log.Fatal("please init your go module with go mod init")
+		log.Fatal("[FATAL] please init your go module with go mod init")
 	}
 
 	return &GenGrpc{
@@ -46,12 +46,12 @@ func NewGenGrpc() *GenGrpc {
 	}
 }
 
-func (g GenGrpc) Process(protoFile string) error {
+func (g GenGrpc) Process(protoPath string) error {
 	if err := g.Setup(); err != nil {
 		return err
 	}
 
-	if err := g.Gen(protoFile, "internal/delivery"); err != nil {
+	if err := g.Gen(protoPath); err != nil {
 		return err
 	}
 
@@ -117,7 +117,7 @@ func (g GenGrpc) CloneProtoRepo() error {
 }
 
 func (g GenGrpc) PullProtoRepo() error {
-	c := exec.Command("git", "checkout", "master")
+	c := exec.Command("git", "checkout", "main")
 	c.Dir = g.cache
 	c.Stdout = os.Stdout
 	c.Stderr = os.Stderr
@@ -125,7 +125,7 @@ func (g GenGrpc) PullProtoRepo() error {
 		return err
 	}
 
-	c = exec.Command("git", "fetch", "origin", "master")
+	c = exec.Command("git", "fetch", "origin", "main")
 	c.Dir = g.cache
 	c.Stdout = os.Stdout
 	c.Stderr = os.Stderr
@@ -133,7 +133,7 @@ func (g GenGrpc) PullProtoRepo() error {
 		return err
 	}
 
-	c = exec.Command("git", "reset", "origin/master", "--hard")
+	c = exec.Command("git", "reset", "origin/main", "--hard")
 	c.Dir = g.cache
 	c.Stdout = os.Stdout
 	c.Stderr = os.Stderr
@@ -147,7 +147,7 @@ func (g GenGrpc) PullProtoRepo() error {
 /*
 	protoc -I ../proto/ ../proto/sample/user_demo.proto --go_out=plugins=grpc,paths=import:./external
 */
-func (g GenGrpc) Gen(serviceProto, delivery string) error {
+func (g GenGrpc) Gen(protoPath string) error {
 	if err := os.MkdirAll("export", os.ModePerm); err != nil {
 		return err
 	}
@@ -156,15 +156,15 @@ func (g GenGrpc) Gen(serviceProto, delivery string) error {
 		return err
 	}
 
-	if err := g.protoC(); err != nil {
+	if err := g.protoC(protoPath); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (g GenGrpc) protoC() error {
-	domainPath := filepath.Join(g.cache, "proto")
+func (g GenGrpc) protoC(protoPath string) error {
+	domainPath := filepath.Join(g.cache, protoPath)
 
 	if !Exists(domainPath) {
 		if err := os.MkdirAll(domainPath, os.ModePerm); err != nil {
@@ -172,7 +172,7 @@ func (g GenGrpc) protoC() error {
 		}
 	}
 
-	pf, err := CopyDir("proto", domainPath)
+	pf, err := CopyDir(protoPath, domainPath)
 	if err != nil {
 		return err
 	}
@@ -189,6 +189,7 @@ func (g GenGrpc) protoC() error {
 		fmt.Sprintf("--go_opt=module=%s", g.module),
 		fmt.Sprintf("--go-grpc_out=./"),
 		fmt.Sprintf("--go-grpc_opt=module=%s", g.module),
+		fmt.Sprintf("--go-gsv_out=./"),
 		fmt.Sprintf("--grpc-gateway_out=:./"),
 		fmt.Sprintf("--grpc-gateway_opt=logtostderr=true"),
 		fmt.Sprintf("--grpc-gateway_opt=module=%s", g.module),
@@ -200,7 +201,7 @@ func (g GenGrpc) protoC() error {
 
 	args = append(args, protoFile...)
 
-	log.Println(args)
+	log.Println("[INFO] ", args)
 	c := exec.Command(args[0], args[1:]...)
 	c.Stdout = os.Stdout
 	c.Stderr = os.Stderr

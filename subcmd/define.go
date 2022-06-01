@@ -19,8 +19,10 @@ func New(name Name) (SubCmd, error) {
 type Name string
 
 const (
-	Init Name = "init"
-	Gen  Name = "gen"
+	Init    Name = "init"
+	Grpc    Name = "grpc"
+	Domain  Name = "domain"
+	Install Name = "install"
 )
 
 var subCmdManager = map[Name]func() SubCmd{}

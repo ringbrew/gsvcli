@@ -13,16 +13,16 @@ func main() {
 
 	subCmd, err := subcmd.New(subcmd.Name(os.Args[1]))
 	if err != nil {
-		log.Fatal("[error]" + err.Error())
+		log.Fatal("[ERROR]" + err.Error())
 	}
 
 	if err := subCmd.Parse(os.Args[2:]); err != nil {
-		log.Fatal("[error]" + err.Error())
+		log.Fatal("[ERROR]" + err.Error())
 	}
 
 	if err := subCmd.Process(); err != nil {
-		log.Fatal("[error]" + err.Error())
+		log.Fatal("[ERROR]" + err.Error())
 	}
 
-	log.Println("[info]done!!!")
+	log.Println("[INFO] success.")
 }
