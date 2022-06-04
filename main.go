@@ -24,5 +24,5 @@ func main() {
 		log.Fatal("[ERROR]" + err.Error())
 	}
 
-	log.Println("[INFO]done!!!")
+	log.Println("[INFO] Success!!!")
 }
