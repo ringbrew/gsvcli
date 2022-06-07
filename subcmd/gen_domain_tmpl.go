@@ -15,8 +15,8 @@ type UseCase struct {
 type QueryParam struct {
 }
 
-func NewUseCase(ctx *domain.UseCaseContext) *Service {
-	return &Service{
+func NewUseCase(ctx *domain.UseCaseContext) *UseCase {
+	return &UseCase{
 		ctx:  ctx,
 		repo: newRepo(),
 	}
