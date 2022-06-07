@@ -42,7 +42,7 @@ func NewGenDomain(domain string) *GenDomain {
 		tmpl: map[string]string{
 			"init.go":    initTmpl,
 			"entity.go":  entityTmpl,
-			"service.go": serviceTmpl,
+			"usecase.go": useCaseTmpl,
 			"repo.go":    repoTmpl,
 		},
 	}

@@ -1,52 +1,52 @@
 package subcmd
 
-const serviceTmpl = `package {{.domain}}
+const useCaseTmpl = `package {{.domain}}
 
 import (
 	"context"
 	"{{.projectName}}/internal/domain"
 )
 
-type Service struct {
-	ctx  *domain.ServiceContext
+type UseCase struct {
+	ctx  *domain.UseCaseContext
 	repo *repo
 }
 
 type QueryParam struct {
 }
 
-func NewService(ctx *domain.ServiceContext) *Service {
+func NewUseCase(ctx *domain.UseCaseContext) *Service {
 	return &Service{
 		ctx:  ctx,
 		repo: newRepo(),
 	}
 }
 
-func (s *Service) Create(ctx context.Context, {{.domain}} *{{.entity}}) error {
-	if err := s.repo.Create(ctx, {{.domain}}); err != nil {
+func (uc *UseCase) Create(ctx context.Context, {{.domain}} *{{.entity}}) error {
+	if err := uc.repo.Create(ctx, {{.domain}}); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Service) Update(ctx context.Context, {{.domain}} *{{.entity}}) error {
-	if err := s.repo.Update(ctx, {{.domain}}); err != nil {
+func (uc *UseCase) Update(ctx context.Context, {{.domain}} *{{.entity}}) error {
+	if err := uc.repo.Update(ctx, {{.domain}}); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Service) Delete(ctx context.Context, {{.domain}} *{{.entity}}) error {
-	if err := s.repo.Delete(ctx, {{.domain}}); err != nil {
+func (uc *UseCase) Delete(ctx context.Context, {{.domain}} *{{.entity}}) error {
+	if err := uc.repo.Delete(ctx, {{.domain}}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *Service) Get(ctx context.Context, id int) ({{.entity}}, error) {
-	result, err := s.repo.Get(ctx, id)
+func (uc *UseCase) Get(ctx context.Context, id int) ({{.entity}}, error) {
+	result, err := uc.repo.Get(ctx, id)
 	if err != nil {
 		return {{.entity}}{}, err
 	}
@@ -54,8 +54,8 @@ func (s *Service) Get(ctx context.Context, id int) ({{.entity}}, error) {
 	return result, nil
 }
 
-func (s *Service) Query(ctx context.Context, param QueryParam) ([]{{.entity}}, int64, error) {
-	result, total, err := s.repo.Query(ctx, param)
+func (uc *UseCase) Query(ctx context.Context, param QueryParam) ([]{{.entity}}, int64, error) {
+	result, total, err := uc.repo.Query(ctx, param)
 	if err != nil {
 		return nil, 0, err
 	}
