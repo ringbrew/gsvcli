@@ -132,8 +132,8 @@ func (p InitProject) Complete() error {
 		return err
 	}
 
-	if _, err := os.Stat(filepath.Join(trn, "cmd.go")); err == nil {
-		if err := os.Rename(filepath.Join(trn, "cmd.go"), filepath.Join(trn, "cmd", strings.ReplaceAll(filepath.Base(p.projectName), "-", "_")+".go")); err != nil {
+	if _, err := os.Stat(filepath.Join(trn, "cmd", "cmd.go")); err == nil {
+		if err := os.Rename(filepath.Join(trn, "cmd", "cmd.go"), filepath.Join(trn, "cmd", strings.ReplaceAll(filepath.Base(p.projectName), "-", "_")+".go")); err != nil {
 			return err
 		}
 	}
