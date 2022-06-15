@@ -10,7 +10,13 @@
 
 生成domain文件夹内容
 
-### gsvcli grpc proto
+### gsvcli grpc -I xxx -P proto
+
+参数说明：
+
+-P 项目内的proto路径
+
+-I proto依赖执行路径
 
 根据proto文件内的内容生成grpc service，proto这个参数可以不传，默认为proto
 
