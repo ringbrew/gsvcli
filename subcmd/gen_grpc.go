@@ -3,6 +3,8 @@ package subcmd
 import (
 	"bufio"
 	"fmt"
+	"github.com/google/uuid"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -46,12 +48,12 @@ func NewGenGrpc() *GenGrpc {
 	}
 }
 
-func (g GenGrpc) Process(protoPath string) error {
+func (g GenGrpc) Process(importPath, protoPath string) error {
 	if err := g.Setup(); err != nil {
 		return err
 	}
 
-	if err := g.Gen(protoPath); err != nil {
+	if err := g.Gen(importPath, protoPath); err != nil {
 		return err
 	}
 
@@ -74,15 +76,7 @@ func (g GenGrpc) Setup() error {
 		return err
 	}
 
-	if err := g.CloneProtoRepo(); err != nil {
-		return err
-	}
-
 	if err := g.SetGoEnv(); err != nil {
-		return err
-	}
-
-	if err := g.PullProtoRepo(); err != nil {
 		return err
 	}
 
@@ -147,7 +141,7 @@ func (g GenGrpc) PullProtoRepo() error {
 /*
 	protoc -I ../proto/ ../proto/sample/user_demo.proto --go_out=plugins=grpc,paths=import:./external
 */
-func (g GenGrpc) Gen(protoPath string) error {
+func (g GenGrpc) Gen(importPath, protoPath string) error {
 	if err := os.MkdirAll("export", os.ModePerm); err != nil {
 		return err
 	}
@@ -156,35 +150,46 @@ func (g GenGrpc) Gen(protoPath string) error {
 		return err
 	}
 
-	if err := g.protoC(protoPath); err != nil {
+	if err := g.protoC(importPath, protoPath); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (g GenGrpc) protoC(protoPath string) error {
-	domainPath := filepath.Join(g.cache, protoPath)
-
-	if !Exists(domainPath) {
-		if err := os.MkdirAll(domainPath, os.ModePerm); err != nil {
+func (g GenGrpc) protoC(importPath, protoPath string) error {
+	var pf []string
+	var err error
+	var prefix = protoPath
+	if importPath != "" {
+		tmpPath := uuid.NewString()
+		pf, err = CopyDir(protoPath, filepath.Join(importPath, tmpPath))
+		if err != nil {
 			return err
 		}
-	}
-
-	pf, err := CopyDir(protoPath, domainPath)
-	if err != nil {
-		return err
+		prefix = tmpPath
+	} else {
+		f, err := ioutil.ReadDir(protoPath)
+		if err != nil {
+			return err
+		}
+		for _, v := range f {
+			pf = append(pf, v.Name())
+		}
 	}
 
 	protoFile := make([]string, 0, len(pf))
 	for _, v := range pf {
-		protoFile = append(protoFile, filepath.Join(domainPath, v))
+		protoFile = append(protoFile, filepath.Join(prefix, v))
 	}
 
 	args := make([]string, 0, 20)
 	args = append(args, "protoc")
-	args = append(args, "-I", g.cache,
+
+	if importPath != "" {
+		args = append(args, "-I", importPath)
+	}
+	args = append(args,
 		fmt.Sprintf("--go_out=./"),
 		fmt.Sprintf("--go_opt=module=%s", g.module),
 		fmt.Sprintf("--go-grpc_out=./"),
