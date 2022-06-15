@@ -13,4 +13,7 @@ func init() {
 	Register(Install, func() SubCmd {
 		return &InstallSubCmd{}
 	})
+	Register(Version, func() SubCmd {
+		return &VersionSubCmd{}
+	})
 }

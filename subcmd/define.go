@@ -23,6 +23,7 @@ const (
 	Grpc    Name = "grpc"
 	Domain  Name = "domain"
 	Install Name = "install"
+	Version Name = "version"
 )
 
 var subCmdManager = map[Name]func() SubCmd{}
