@@ -11,7 +11,7 @@ type GenDomainSubCmd struct {
 
 func (sc *GenDomainSubCmd) Parse(args []string) error {
 	if len(args) == 0 {
-		return errors.New("invalid project name")
+		return errors.New("invalid domain")
 	}
 	sc.Domain = args[0]
 	return nil
