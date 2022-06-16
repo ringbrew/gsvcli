@@ -3,7 +3,6 @@ package subcmd
 import (
 	"bufio"
 	"fmt"
-	"github.com/google/uuid"
 	"io/ioutil"
 	"log"
 	"os"
@@ -162,12 +161,18 @@ func (g GenGrpc) protoC(importPath, protoPath string) error {
 	var err error
 	var prefix = protoPath
 	if importPath != "" {
-		tmpPath := uuid.NewString()
-		pf, err = CopyDir(protoPath, filepath.Join(importPath, tmpPath))
+		tfp := filepath.Join(importPath, protoPath)
+		if err := os.MkdirAll(tfp, os.ModePerm); err != nil {
+			return err
+		}
+		defer func() {
+			_ = os.RemoveAll(tfp)
+		}()
+
+		pf, err = CopyDir(protoPath, filepath.Join(importPath, protoPath))
 		if err != nil {
 			return err
 		}
-		prefix = tmpPath
 	} else {
 		f, err := ioutil.ReadDir(protoPath)
 		if err != nil {
