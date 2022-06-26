@@ -20,6 +20,7 @@ func (sc *InstallSubCmd) Process() error {
 		"github.com/ringbrew/protoc-gen-go-gsv@latest",
 		"google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.0",
 		"google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2.0",
+		"github.com/ringbrew/protoc-go-inject-tag@v1.3.1",
 	}
 
 	/*

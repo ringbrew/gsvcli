@@ -217,7 +217,17 @@ func (g GenGrpc) protoC(importPath, protoPath string) error {
 	c.Stdout = os.Stdout
 	c.Stderr = os.Stderr
 
-	return c.Run()
+	if err := c.Run(); err != nil {
+		return err
+	}
+
+	c = exec.Command("protoc-go-inject-tag", `-input=export/*/*.pb.go`)
+	c.Stdout = os.Stdout
+	c.Stderr = os.Stderr
+
+	_ = c.Run()
+
+	return nil
 }
 
 func (g GenGrpc) ModTidy() error {
