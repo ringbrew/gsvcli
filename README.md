@@ -1,16 +1,20 @@
 # gsvcli
 
-## 命令列表
+## How to install
 
-### gsvcli init github.com/rinbgbrew/demo
+go install -v github.com/ringbrew/gsvcli/gsv@latest
+
+## How to use
+
+### gsv init github.com/rinbgbrew/demo
 
 初始化脚手架项目
 
-### gsvcli domain xxxx
+### gsv gen domain {domainName}
 
 生成domain文件夹内容
 
-### gsvcli grpc -I xxx -P proto
+### gsv gen grpc -I xxx -P proto
 
 参数说明：
 
@@ -20,6 +24,6 @@
 
 根据proto文件内的内容生成grpc service，proto这个参数可以不传，默认为proto
 
-### gsvcli install
+### gsv install
 
-安装protoc依赖
+安装gsv依赖

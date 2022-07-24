@@ -22,7 +22,6 @@ const (
 	Init    Name = "init"
 	Grpc    Name = "grpc"
 	Domain  Name = "domain"
-	Http    Name = "http"
 	Install Name = "install"
 	Version Name = "version"
 )
