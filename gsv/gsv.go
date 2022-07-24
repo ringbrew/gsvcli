@@ -13,7 +13,8 @@ func main() {
 	}
 
 	genCmd := &cobra.Command{
-		Use: "gen",
+		Use:   "gen",
+		Short: "gsv code generator.",
 	}
 
 	rootCmd.AddCommand(subcmd.NewInitCommand())
