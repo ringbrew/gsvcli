@@ -10,9 +10,6 @@ func init() {
 	Register(Grpc, func() SubCmd {
 		return &GenGrpcSubCmd{}
 	})
-	Register(Http, func() SubCmd {
-		return &GenHttpSubCmd{}
-	})
 	Register(Install, func() SubCmd {
 		return &InstallSubCmd{}
 	})

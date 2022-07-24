@@ -2,6 +2,7 @@ package subcmd
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
 	"log"
 	"strings"
 )
@@ -47,4 +48,36 @@ func (sc *GenGrpcSubCmd) Parse(args []string) error {
 func (sc *GenGrpcSubCmd) Process() error {
 	log.Printf("gen grpc command is running -I[%s], -P[%s]\n", sc.ImportPath, sc.ProtoPath)
 	return NewGenGrpc().Process(sc.ImportPath, sc.ProtoPath)
+}
+
+func NewGrpcCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "grpc",
+		Short: "generator for grpc code",
+		Run: func(cmd *cobra.Command, args []string) {
+			argsMap := make(map[string]string)
+
+			for i := 0; i < len(args); i++ {
+				a := strings.Split(args[i], "=")
+				if len(a) != 2 {
+					log.Fatal(fmt.Errorf("invalid param[%s]", args[i]).Error())
+				}
+
+				argsMap[a[0][1:]] = a[1]
+			}
+
+			importPath := argsMap["I"]
+			protoPath := argsMap["P"]
+
+			if protoPath == "" {
+				protoPath = "proto"
+			}
+
+			log.Printf("gen grpc command is running -I[%s], -P[%s]\n", importPath, protoPath)
+
+			if err := NewGenGrpc().Process(importPath, protoPath); err != nil {
+				log.Fatal(err.Error())
+			}
+		},
+	}
 }

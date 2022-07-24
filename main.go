@@ -2,27 +2,30 @@ package main
 
 import (
 	"github.com/ringbrew/gsvcli/subcmd"
+	"github.com/spf13/cobra"
 	"log"
-	"os"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatal("sub command is required")
+	rootCmd := &cobra.Command{
+		Use:   "gsv",
+		Short: "gsv helper command tools.",
 	}
 
-	subCmd, err := subcmd.New(subcmd.Name(os.Args[1]))
-	if err != nil {
-		log.Fatal("[ERROR]" + err.Error())
+	genCmd := &cobra.Command{
+		Use: "gen",
 	}
 
-	if err := subCmd.Parse(os.Args[2:]); err != nil {
-		log.Fatal("[ERROR]" + err.Error())
-	}
+	rootCmd.AddCommand(subcmd.NewInitCommand())
+	rootCmd.AddCommand(subcmd.NewInstallCommand())
 
-	if err := subCmd.Process(); err != nil {
-		log.Fatal("[ERROR]" + err.Error())
-	}
+	genCmd.AddCommand(subcmd.NewGrpcCommand())
+	genCmd.AddCommand(subcmd.NewDomainCommand())
+	rootCmd.AddCommand(genCmd)
 
-	log.Println("[INFO] Success!!!")
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatal(err.Error())
+	} else {
+		log.Printf("[INFO]Success!")
+	}
 }
