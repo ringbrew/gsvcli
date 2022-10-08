@@ -159,7 +159,7 @@ func (gh *GenHandler) Process() error {
 		return errors.New("error sentry not found, use \"return s\" as sentry now")
 	}
 
-	serviceFile, err := os.OpenFile(fp, os.O_TRUNC, 0)
+	serviceFile, err := os.OpenFile(sfp, os.O_TRUNC, 0)
 	if err != nil {
 		return err
 	}
