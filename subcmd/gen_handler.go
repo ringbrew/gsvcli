@@ -96,7 +96,7 @@ func NewGenHandler(domain string, subdomain string) *GenHandler {
 func (gh *GenHandler) Process() error {
 	deliveryPath := filepath.Join("internal", "delivery", gh.domain)
 
-	fn := fmt.Sprintf("%s_handler.go", gh.domain)
+	fn := fmt.Sprintf("handler_%s.go", gh.subdomain)
 	fp := filepath.Join(deliveryPath, fn)
 
 	sfn := "service.http.impl.go"
@@ -146,10 +146,6 @@ func (gh *GenHandler) Process() error {
 
 	found := false
 
-	/*
-		handler := NewChildcareHandler(ctx)
-		s.desc.HttpRoute = append(s.desc.HttpRoute, handler.HttpRoute()...)
-	*/
 	for _, v := range lines {
 		if strings.Contains(v, "return s") {
 			found = true
