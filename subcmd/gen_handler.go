@@ -15,8 +15,9 @@ import (
 )
 
 type GenHandler struct {
-	module string
-	domain string
+	module    string
+	domain    string
+	subdomain string
 }
 
 const httpHandlerGenTmpl = `package [[.domain]]
@@ -65,7 +66,7 @@ func (h *[[.prefix]]Handler) HttpRoute() []service.HttpRoute {
 }
 `
 
-func NewGenHandler(domain string) *GenHandler {
+func NewGenHandler(domain string, subdomain string) *GenHandler {
 	module := ""
 	if file, err := os.Open("go.mod"); err == nil {
 		defer file.Close()
@@ -86,8 +87,9 @@ func NewGenHandler(domain string) *GenHandler {
 	}
 
 	return &GenHandler{
-		module: module,
-		domain: domain,
+		module:    module,
+		domain:    domain,
+		subdomain: subdomain,
 	}
 }
 
@@ -100,7 +102,7 @@ func (gh *GenHandler) Process() error {
 	sfn := "service.http.impl.go"
 	sfp := filepath.Join(deliveryPath, sfn)
 
-	prefix := cases.Title(language.Und).String(gh.domain)
+	prefix := cases.Title(language.Und).String(gh.subdomain)
 
 	if _, err := os.Stat(sfp); err != nil {
 		return fmt.Errorf("error[%s] please init service.http.impl.go first", err.Error())
@@ -151,8 +153,8 @@ func (gh *GenHandler) Process() error {
 	for _, v := range lines {
 		if strings.Contains(v, "return s") {
 			found = true
-			result = append(result, fmt.Sprintf("%sHandler := New%sHandler(ctx)", gh.domain, prefix))
-			result = append(result, fmt.Sprintf("s.desc.HttpRoute = append(s.desc.HttpRoute, %sHandler.HttpRoute()...)", gh.domain))
+			result = append(result, fmt.Sprintf("%sHandler := New%sHandler(ctx)", gh.subdomain, prefix))
+			result = append(result, fmt.Sprintf("s.desc.HttpRoute = append(s.desc.HttpRoute, %sHandler.HttpRoute()...)", gh.subdomain))
 		}
 		result = append(result, v)
 	}
