@@ -96,13 +96,20 @@ func NewGenHandler(domain string, subdomain string) *GenHandler {
 func (gh *GenHandler) Process() error {
 	deliveryPath := filepath.Join("internal", "delivery", gh.domain)
 
-	fn := fmt.Sprintf("handler_%s.go", gh.subdomain)
+	prefix := ""
+
+	if strings.ToLower(gh.domain) != strings.ToLower(gh.subdomain) {
+		prefix = cases.Title(language.Und).String(gh.subdomain)
+	}
+
+	fn := "handler.go"
+	if prefix != "" {
+		fn = fmt.Sprintf("handler_%s.go", gh.subdomain)
+	}
 	fp := filepath.Join(deliveryPath, fn)
 
 	sfn := "service.http.impl.go"
 	sfp := filepath.Join(deliveryPath, sfn)
-
-	prefix := cases.Title(language.Und).String(gh.subdomain)
 
 	if _, err := os.Stat(sfp); err != nil {
 		return fmt.Errorf("error[%s] please init service.http.impl.go first", err.Error())
@@ -147,11 +154,24 @@ func (gh *GenHandler) Process() error {
 	found := false
 
 	for _, v := range lines {
-		if strings.Contains(v, "return s") {
+		if strings.HasSuffix(v, "return s") {
 			found = true
-			result = append(result, fmt.Sprintf("%sHandler := New%sHandler(ctx)", gh.subdomain, prefix))
-			result = append(result, fmt.Sprintf("s.desc.HttpRoute = append(s.desc.HttpRoute, %sHandler.HttpRoute()...)", gh.subdomain))
+
+			fl := "handler := NewHandler(ctx)"
+			if prefix != "" {
+				fl = fmt.Sprintf("%sHandler := New%sHandler(ctx)", gh.subdomain, prefix)
+			}
+			result = append(result, fl)
+
+			sl := "s.desc.HttpRoute = append(s.desc.HttpRoute, handler.HttpRoute()...)"
+
+			if prefix != "" {
+				sl = fmt.Sprintf("s.desc.HttpRoute = append(s.desc.HttpRoute, %sHandler.HttpRoute()...)", gh.subdomain)
+			}
+
+			result = append(result, sl)
 		}
+
 		result = append(result, v)
 	}
 
