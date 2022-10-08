@@ -28,7 +28,7 @@ func (sc *GenHandlerSubCmd) Process() error {
 func NewHandlerCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:     "handler",
-		Short:   "generator for http code, use gsv gen http {domain} {subdomain}",
+		Short:   "generator for handler code. usage: gsv gen handler {domain} {subdomain}",
 		Example: "gsv gen http demo example",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) != 2 {

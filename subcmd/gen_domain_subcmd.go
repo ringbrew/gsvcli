@@ -28,7 +28,7 @@ func (sc *GenDomainSubCmd) Process() error {
 func NewDomainCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "domain",
-		Short: "generator for domain code",
+		Short: "generator for domain code. usage: gsv gen domain {domain}",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
 				log.Fatal(errors.New("invalid domain").Error())

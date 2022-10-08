@@ -28,7 +28,7 @@ func (sc *GenHttpSubCmd) Process() error {
 func NewHttpCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "http",
-		Short: "generator for http code",
+		Short: "generator for http code. usage: gsv gen http {domain}",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
 				log.Fatal(errors.New("invalid domain").Error())
