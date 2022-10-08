@@ -16,7 +16,7 @@ type GenHttp struct {
 	domain string
 }
 
-const httpServiceGenImpl = `package [[.domain]]
+const httpServiceGenTmpl = `package [[.domain]]
 
 import (
 	"github.com/ringbrew/gsv/service"
@@ -32,11 +32,13 @@ type Service struct {
 }
 
 func NewService(ctx *domain.UseCaseContext) service.Service {
-	return &Service{
+	s := &Service{
 		ctx: ctx,
 		name:   "api.[[.domain]].service",
 		remark: "",
 	}
+
+	return s
 }
 
 func (s *Service) Name() string {
@@ -97,8 +99,9 @@ func (gh *GenHttp) Process() error {
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 
-	t, err := template.New("service.http.impl.go").Delims("[[", "]]").Parse(httpServiceGenImpl)
+	t, err := template.New("service.http.impl.go").Delims("[[", "]]").Parse(httpServiceGenTmpl)
 	if err != nil {
 		return err
 	}
