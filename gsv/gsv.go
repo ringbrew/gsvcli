@@ -22,6 +22,8 @@ func main() {
 
 	genCmd.AddCommand(subcmd.NewGrpcCommand())
 	genCmd.AddCommand(subcmd.NewDomainCommand())
+	genCmd.AddCommand(subcmd.NewHttpCommand())
+
 	rootCmd.AddCommand(genCmd)
 
 	if err := rootCmd.Execute(); err != nil {
