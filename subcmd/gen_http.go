@@ -98,7 +98,7 @@ func (gh *GenHttp) Process() error {
 		return err
 	}
 
-	t, err := template.New("service.http.impl.go").Parse(httpServiceGenImpl)
+	t, err := template.New("service.http.impl.go").Delims("[[", "]]").Parse(httpServiceGenImpl)
 	if err != nil {
 		return err
 	}
