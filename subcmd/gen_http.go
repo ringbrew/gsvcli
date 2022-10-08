@@ -78,9 +78,10 @@ func NewGenHttp(domain string) *GenHttp {
 }
 
 func (gh *GenHttp) Process() error {
-	deliveryPath := filepath.Join("delivery", gh.domain, "service.http.impl.go")
+	deliveryPath := filepath.Join("internal", "delivery", gh.domain)
+	fp := filepath.Join(deliveryPath, "service.http.impl.go")
 
-	if _, err := os.Stat(deliveryPath); err != nil {
+	if _, err := os.Stat(fp); err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
 			return err
 		}
@@ -92,7 +93,7 @@ func (gh *GenHttp) Process() error {
 		return err
 	}
 
-	file, err := os.Create(deliveryPath)
+	file, err := os.Create(fp)
 	if err != nil {
 		return err
 	}
