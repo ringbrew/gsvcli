@@ -23,6 +23,7 @@ func main() {
 	genCmd.AddCommand(subcmd.NewGrpcCommand())
 	genCmd.AddCommand(subcmd.NewDomainCommand())
 	genCmd.AddCommand(subcmd.NewHttpCommand())
+	genCmd.AddCommand(subcmd.NewHandlerCommand())
 
 	rootCmd.AddCommand(genCmd)
 

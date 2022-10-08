@@ -37,7 +37,7 @@ func NewHandlerCommand() *cobra.Command {
 
 			log.Printf("gen handler command is running domain[%s]\n", domain)
 
-			p := NewGenHttp(domain)
+			p := NewGenHandler(domain)
 			if err := p.Process(); err != nil {
 				log.Fatal(err.Error())
 			}
