@@ -175,19 +175,17 @@ func (gh *GenHandler) Process() error {
 		result = append(result, v)
 	}
 
-	if !found {
-		return errors.New("error sentry not found, use \"return s\" as sentry now")
-	}
-
-	serviceFile, err := os.OpenFile(sfp, os.O_WRONLY|os.O_TRUNC, 0644)
-	if err != nil {
-		return err
-	}
-	defer serviceFile.Close()
-
-	for _, v := range result {
-		if _, err := serviceFile.WriteString(v + "\n"); err != nil {
+	if found {
+		serviceFile, err := os.OpenFile(sfp, os.O_WRONLY|os.O_TRUNC, 0644)
+		if err != nil {
 			return err
+		}
+		defer serviceFile.Close()
+
+		for _, v := range result {
+			if _, err := serviceFile.WriteString(v + "\n"); err != nil {
+				return err
+			}
 		}
 	}
 
