@@ -2,6 +2,7 @@ package subcmd
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -40,10 +41,10 @@ func NewGenDomain(domain string) *GenDomain {
 		module: module,
 		domain: domain,
 		tmpl: map[string]string{
-			"init.go":    initTmpl,
-			"entity.go":  entityTmpl,
-			"usecase.go": useCaseTmpl,
-			"repo.go":    repoTmpl,
+			"init.go":                    initTmpl,
+			fmt.Sprintf("%s.go", domain): entityTmpl,
+			"usecase.go":                 useCaseTmpl,
+			"repo.go":                    repoTmpl,
 		},
 	}
 }
