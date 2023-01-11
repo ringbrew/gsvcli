@@ -38,15 +38,15 @@ func (uc *UseCase) Update(ctx context.Context, {{.domain}} *{{.entity}}) error {
 	return nil
 }
 
-func (uc *UseCase) Delete(ctx context.Context, {{.domain}} *{{.entity}}) error {
+func (uc *UseCase) Delete(ctx context.Context, id string) error {
 	if err := uc.repo.Delete(ctx, {{.domain}}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (uc *UseCase) Get(ctx context.Context, id int) ({{.entity}}, error) {
-	result, err := uc.repo.Get(ctx, id)
+func (uc *UseCase) Get(ctx context.Context, id string) ({{.entity}}, error) {
+	result, err := uc.repo.Get(ctx, string)
 	if err != nil {
 		return {{.entity}}{}, err
 	}
@@ -102,11 +102,11 @@ func (r *repo) Update(ctx context.Context, {{.domain}} *{{.entity}}) error {
 	return nil
 }
 
-func (r *repo) Delete(ctx context.Context, {{.domain}} *{{.entity}}) error {
+func (r *repo) Delete(ctx context.Context, id string) error {
 	return nil
 }
 
-func (r *repo) Get(ctx context.Context, id int) ({{.entity}}, error) {
+func (r *repo) Get(ctx context.Context, id string) ({{.entity}}, error) {
 	return {{.entity}}{}, nil
 }
 
