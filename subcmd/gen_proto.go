@@ -91,7 +91,7 @@ func (g *GenProto) GenMessage(p Struct) (string, error) {
 		return string(r)
 	}
 
-	index := 1
+	index := 6
 
 	sb := strings.Builder{}
 	sb.WriteString(fmt.Sprintf("message %s {\n", p.Name))
