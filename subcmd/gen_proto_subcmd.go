@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-type GenHttpSubCmd struct {
+type GenProtoSubCmd struct {
 	Domain string
 }
 
-func (sc *GenHttpSubCmd) Parse(args []string) error {
+func (sc *GenProtoSubCmd) Parse(args []string) error {
 	if len(args) == 0 {
 		return errors.New("invalid domain")
 	}
@@ -18,26 +18,26 @@ func (sc *GenHttpSubCmd) Parse(args []string) error {
 	return nil
 }
 
-func (sc *GenHttpSubCmd) Process() error {
-	log.Printf("[INFO] gen http command is running\n")
+func (sc *GenProtoSubCmd) Process() error {
+	log.Printf("[INFO] gen proto command is running\n")
 
 	p := NewGenHttp(sc.Domain)
 	return p.Process()
 }
 
-func NewHttpCommand() *cobra.Command {
+func NewGenProtoSubCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "http",
-		Short: "generator for http code. usage: gsv gen http {domain}",
+		Use:   "proto",
+		Short: "generator for proto file message. usage: gsv gen proto {domain}",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
 				log.Fatal(errors.New("invalid domain").Error())
 			}
 			domain := args[0]
 
-			log.Printf("gen http command is running domain[%s]\n", domain)
+			log.Printf("gen proto command is running domain[%s]\n", domain)
 
-			p := NewGenHttp(domain)
+			p := NewGenProto(domain)
 			if err := p.Process(); err != nil {
 				log.Fatal(err.Error())
 			}

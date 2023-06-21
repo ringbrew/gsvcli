@@ -19,7 +19,7 @@ func (sc *GenHandlerSubCmd) Parse(args []string) error {
 }
 
 func (sc *GenHandlerSubCmd) Process() error {
-	log.Printf("[INFO] gen domain command is running\n")
+	log.Printf("[INFO] gen handler command is running\n")
 
 	p := NewGenHttp(sc.Domain)
 	return p.Process()
