@@ -25,9 +25,9 @@ func (sc *InitSubCmd) Process() error {
 		return err
 	}
 
-	if err := p.SetGoEnv(); err != nil {
-		return err
-	}
+	//if err := p.SetGoEnv(); err != nil {
+	//	return err
+	//}
 
 	if err := p.GetTemplate(); err != nil {
 		return err
@@ -55,9 +55,9 @@ func NewInitCommand() *cobra.Command {
 				log.Fatal(err.Error())
 			}
 
-			if err := p.SetGoEnv(); err != nil {
-				log.Fatal(err.Error())
-			}
+			//if err := p.SetGoEnv(); err != nil {
+			//	log.Fatal(err.Error())
+			//}
 
 			if err := p.GetTemplate(); err != nil {
 				log.Fatal(err.Error())

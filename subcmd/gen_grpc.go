@@ -68,16 +68,16 @@ func (g GenGrpc) Process(importPath, protoPath string) error {
 }
 
 /*
-	protoc -I ../proto/ ../proto/sample/user_demo.proto --go_out=plugins=grpc,paths=import:./external
+protoc -I ../proto/ ../proto/sample/user_demo.proto --go_out=plugins=grpc,paths=import:./external
 */
 func (g GenGrpc) Setup() error {
 	if err := os.RemoveAll(g.cache); err != nil {
 		return err
 	}
 
-	if err := g.SetGoEnv(); err != nil {
-		return err
-	}
+	//if err := g.SetGoEnv(); err != nil {
+	//	return err
+	//}
 
 	return nil
 }
@@ -138,7 +138,7 @@ func (g GenGrpc) PullProtoRepo() error {
 }
 
 /*
-	protoc -I ../proto/ ../proto/sample/user_demo.proto --go_out=plugins=grpc,paths=import:./external
+protoc -I ../proto/ ../proto/sample/user_demo.proto --go_out=plugins=grpc,paths=import:./external
 */
 func (g GenGrpc) Gen(importPath, protoPath string) error {
 	if err := os.MkdirAll("export", os.ModePerm); err != nil {
