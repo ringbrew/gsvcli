@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -52,8 +53,9 @@ func (sc *GenGrpcSubCmd) Process() error {
 
 func NewGrpcCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "grpc",
-		Short: "generator for grpc code. usage: gsv gen grpc optional:-I=importPath optional:-P=protoPath",
+		Use:                "grpc",
+		Short:              "generator for grpc code. usage: gsv gen grpc optional:-I=importPath optional:-P=protoPath",
+		DisableFlagParsing: true,
 		Run: func(cmd *cobra.Command, args []string) {
 			argsMap := make(map[string]string)
 
@@ -71,6 +73,10 @@ func NewGrpcCommand() *cobra.Command {
 
 			if protoPath == "" {
 				protoPath = "proto"
+			}
+
+			if importPath == "" {
+				importPath = os.Getenv("GOPROTO")
 			}
 
 			log.Printf("gen grpc command is running -I[%s], -P[%s]\n", importPath, protoPath)
