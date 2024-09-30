@@ -208,6 +208,7 @@ func (g GenGrpc) protoC(importPath, protoPath string) error {
 		fmt.Sprintf("--openapiv2_out=./openapi"),
 		fmt.Sprintf("--openapiv2_opt=logtostderr=true"),
 		fmt.Sprintf("--openapiv2_opt=allow_merge=true"),
+		fmt.Sprintf("--openapiv2_opt=enums_as_ints=true"),
 		fmt.Sprintf("--openapiv2_opt=merge_file_name=%s", filepath.Base(g.module)),
 	)
 
