@@ -195,6 +195,8 @@ func (g GenGrpc) protoC(importPath, protoPath string) error {
 		args = append(args, "-I", importPath)
 	}
 
+	args = append(args, "-I", protoPath)
+
 	args = append(args,
 		fmt.Sprintf("--go_out=./"),
 		fmt.Sprintf("--go_opt=module=%s", g.module),
