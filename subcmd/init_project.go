@@ -76,6 +76,7 @@ func (p InitProject) GetTemplate() error {
 func (p InitProject) Render() error {
 	projectName := p.projectName
 	baseName := filepath.Base(projectName)
+	cmdName := strings.ReplaceAll(filepath.Base(p.projectName), "-", "_")
 
 	err := filepath.Walk(p.tempPath,
 		func(path string, info os.FileInfo, err error) error {
@@ -87,6 +88,7 @@ func (p InitProject) Render() error {
 					if err := ft.Execute(file, map[string]interface{}{
 						"projectName": projectName,
 						"baseName":    baseName,
+						"cmdName":     cmdName,
 					}); err != nil {
 						return err
 					}
