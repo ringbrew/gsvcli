@@ -3,7 +3,6 @@ package subcmd
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -157,45 +156,28 @@ func (g GenGrpc) Gen(importPath, protoPath string) error {
 }
 
 func (g GenGrpc) protoC(importPath, protoPath string) error {
-	var pf []string
-	var err error
-	var prefix = protoPath
-	if importPath != "" {
-		tfp := filepath.Join(importPath, protoPath)
-		if err := os.MkdirAll(tfp, os.ModePerm); err != nil {
-			return err
-		}
-		defer func() {
-			_ = os.RemoveAll(tfp)
-		}()
-
-		pf, err = CopyDir(protoPath, filepath.Join(importPath, protoPath))
-		if err != nil {
-			return err
-		}
-	} else {
-		f, err := ioutil.ReadDir(protoPath)
-		if err != nil {
-			return err
-		}
-		for _, v := range f {
-			pf = append(pf, v.Name())
-		}
+	protoFile, err := listProtoFile(protoPath)
+	if err != nil {
+		return err
 	}
 
-	protoFile := make([]string, 0, len(pf))
-	for _, v := range pf {
-		protoFile = append(protoFile, filepath.Join(prefix, v))
+	if len(protoFile) == 0 {
+		return fmt.Errorf("no .proto file found under %s", protoPath)
 	}
 
 	args := make([]string, 0, 20)
 	args = append(args, "protoc")
 
+	// importPath(未显式指定时取环境变量 GOPROTO)是第三方依赖 proto 的集中存放目录，
+	// 例如 google/api/annotations.proto、protoc-gen-openapiv2/options/annotations.proto。
 	if importPath != "" {
 		args = append(args, "-I", importPath)
 	}
 
-	args = append(args, "-I", protoPath)
+	// 项目自身的 proto 以仓库根目录为 include 根，descriptor 名因此保留 protoPath
+	// 前缀(如 proto/account.proto)。这个名字是 protoregistry 的 key，也是 import
+	// 语句必须写的路径，跨版本必须稳定 —— 用 -I protoPath 会把前缀剥掉。
+	args = append(args, "-I", ".")
 
 	args = append(args,
 		fmt.Sprintf("--go_out=./"),
@@ -225,13 +207,56 @@ func (g GenGrpc) protoC(importPath, protoPath string) error {
 		return err
 	}
 
-	c = exec.Command("protoc-go-inject-tag", `-input=export/*/*.pb.go`)
-	c.Stdout = os.Stdout
-	c.Stderr = os.Stderr
-
-	_ = c.Run()
+	injectTag()
 
 	return nil
+}
+
+// listProtoFile 递归收集 protoPath 下的 .proto，返回相对当前目录的路径。
+// 递归是为了支持 proto/<domain>/<version>/x.proto 这类分层布局；过滤扩展名是
+// 为了不把目录项和 README 之类的文件当成 proto 传给 protoc。
+func listProtoFile(protoPath string) ([]string, error) {
+	result := make([]string, 0, 8)
+
+	if err := filepath.Walk(protoPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() || filepath.Ext(path) != ".proto" {
+			return nil
+		}
+
+		result = append(result, path)
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// injectTag 把 proto 注释里的 // @gotags: 回填成 struct tag。protoc-go-inject-tag
+// 的 -input 走 filepath.Glob，不支持 **，所以按 pb.go 所在目录逐个调用，
+// 才能覆盖 export 下的多级目录。失败不阻断生成，与历史行为保持一致。
+func injectTag() {
+	dir := make(map[string]struct{})
+
+	_ = filepath.Walk("export", func(path string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() || !strings.HasSuffix(path, ".pb.go") {
+			return nil
+		}
+
+		dir[filepath.Dir(path)] = struct{}{}
+		return nil
+	})
+
+	for d := range dir {
+		c := exec.Command("protoc-go-inject-tag", fmt.Sprintf("-input=%s/*.pb.go", d))
+		c.Stdout = os.Stdout
+		c.Stderr = os.Stderr
+		_ = c.Run()
+	}
 }
 
 func (g GenGrpc) ModTidy() error {
